@@ -1,7 +1,7 @@
 """CIFAR-10 classifiers that score generated images: a ViT (the reward) and a ResNet-18 (the judge).
 
 The ViT is the "patch 4, 2x epochs" model from the ViT-from-scratch post (93.1% test accuracy,
-repository transformer-trainings, module vitlab.models.vit). The layer names here match that
+repository vit-cifar10-from-scratch, module vitcifar.models.vit). The layer names here match that
 module, so its checkpoint loads without changes. The ResNet-18 is a different architecture, so
 an image that fools the ViT does not automatically fool it.
 """
