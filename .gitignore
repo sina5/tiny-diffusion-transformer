@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+build/
+dist/
+*.egg-info/
+
+# Datasets (downloaded by the scripts)
+data/
+
+# Run outputs (results, logs, charts; they contain local paths)
+runs/
+
+# Smoke-run outputs
+smoke/
+
+# Model weights (publish elsewhere, never in Git)
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.safetensors
+*.bin
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local secrets
+.env
+
+# redthread memory store
+redthread-store/
+
+# Browser automation output
+.playwright-mcp/
+
+# FID reference statistics (rebuilt from CIFAR-10 on first use)
