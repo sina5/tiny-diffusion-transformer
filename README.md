@@ -69,6 +69,9 @@ uv run python scripts/train_diffusion.py --method flow_matching   # or meanflow,
 # FID-10k at several step counts (appends to fid.json in the run folder)
 uv run python scripts/evaluate_fid.py --method flow_matching --steps 1 2 4 8 16 32 64 128
 uv run python scripts/evaluate_fid.py --method flow_matching --solver heun --steps 4 8 16
+
+# Charts and equal-NFE sample grids for the blog posts (writes runs/blog_figures/)
+uv run python scripts/make_blog_figures.py
 ```
 
 ## Output
@@ -91,7 +94,24 @@ One run of 200 epochs: 86.5 minutes of training on an RTX 3080 Ti (26 s per epoc
 - **Samples**: airplanes, cars, horses, ships and trucks have clear shapes and plausible backgrounds. Cats, dogs, birds and frogs often have the right colors and texture but a blurred or broken shape.
 - **Progress**: the EMA samples are still noise at epoch 45. Objects appear by epoch 85, and the samples change little after epoch 120. The training loss drops much earlier (0.033 at epoch 25, 0.030 at epoch 200). Part of the delay comes from the EMA: with decay 0.9999, the averaged weights trail the current weights by about 10,000 steps, which is about 26 epochs.
 - **Memorization check**: the nearest training image in pixel space is a different image for each of the 10 samples checked. This is a small check, not a proof.
-- **Quality metric**: the project does not compute FID, so the results are visual only.
+- **FID-10k** (`runs/fid.json`): 83.4 at 8 NFE, 30.1 at 32 NFE and 19.9 at 256 NFE (DDIM with 4, 16 and 128 steps). With 1 or 2 steps, DDIM gives noise (FID above 350).
+
+### Other methods
+
+Each method has one run of 200 epochs. FID-10k is from `runs/<method>/fid.json`.
+
+| Method | Time per epoch | FID-10k at 2 NFE | at 8 NFE | at 32 NFE | Best (NFE) |
+| --- | --- | --- | --- | --- | --- |
+| DDPM (DDIM) | 25.9 s | 360.9 | 83.4 | 30.1 | 19.9 (256) |
+| Flow matching (Euler) | 25.9 s | 310.0 | 38.9 | 20.2 | 14.0 (256) |
+| MeanFlow | 50.5 s | 17.5 | 16.1 | 17.7 | 15.0 (16) |
+| Shortcut model | 31.0 s | 40.5 | 18.2 | 16.8 | 16.7 (64) |
+
+MeanFlow gives 39.9 with one model call. The first MeanFlow run scaled the time input by 1000; its loss diverged (`runs/meanflow_time1000_diverged/`).
+
+### Reward fine-tuning
+
+The final FID-10k of the base model (stochastic DDIM, 20 steps, no guidance) is 51.9. After 300 iterations at learning rate 1e-5, the data regularizer with beta 0.01 gives 38.6 (seed 0) and 38.2 (seed 1), and reward only gives 47.3 and 43.7. At learning rate 1e-4, reward only collapses (FID 379.4), and the data regularizer with beta 0.01 hacks the reward: the judge accuracy drops from 50.8% to 45.7% while the reward-ViT accuracy rises. The values are in `runs/ddrl/*/final.json`.
 
 ## Layout
 
@@ -106,7 +126,7 @@ tinydit/               package
   models/classifiers.py  reward ViT and judge ResNet-18
   data.py              CIFAR-10 pipeline
   plotting.py          chart helpers
-  experiments/         training loop, snapshots, figures, FID sweep
+  experiments/         training loop, snapshots, figures, FID sweep, blog figures
 scripts/               entry scripts
 tests/                 pytest suite (CPU only, no downloads)
 ```

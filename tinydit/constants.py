@@ -117,3 +117,12 @@ FID_REFERENCE_FILE = "fid_reference_cifar10_train.npz"
 FIG_SIZE = (16, 9)
 FIG_DPI = 150
 VIT_COLOR = "#E63946"
+# Categorical slots in fixed order (blue, orange, aqua, yellow, magenta), checked for color-blind separation
+SERIES_COLORS = ("#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4")
+REFERENCE_COLOR = "#52514e"  # the base model and other reference lines
+
+# --- Blog figures -------------------------------------------------------------
+CIFAR10_CLASSES = ("airplane", "automobile", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck")
+BLOG_FIGURES_DIR = RUNS_DIR / "blog_figures"
+COMPARE_SEED = 2024  # the same noise for every panel of a comparison grid
+COMPARE_PER_CLASS = 4  # samples per class in each panel
